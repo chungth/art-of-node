@@ -1,9 +1,9 @@
 # The Art of Node
 ## Giới thiệu về Nodejs
 
-Tài liệu này dành cho độc giả ít nhất biết một số điều sau: 
+Tài liệu này dành cho độc giả ít nhất biết một số điều sau:
 
-- Một ngôn ngữ lập trình kịch bản(scripting language) như là JavaScript, Ruby, Python, Perl, vv. Nếu bạn chưa phải là lập trình viên, 
+- Một ngôn ngữ lập trình kịch bản(scripting language) như là JavaScript, Ruby, Python, Perl, vv. Nếu bạn chưa phải là lập trình viên,
 có thể sẽ dễ dàng bắt đầu hơn bằng việc đọc [JavaScript for Cats](http://jsforcats.com/). :cat2:
 - Git và Github, chúng đều là các công cụ hợp tác opensource mà mọi người trong cộng đồng Node sử dụng để chia sẻ các modules.
  Bạn chỉ cần hiểu cơ bản. Và đây là ba tutorial giới thiệu khá tuyệt vời.
@@ -11,8 +11,8 @@ có thể sẽ dễ dàng bắt đầu hơn bằng việc đọc [JavaScript for
 
 ## Mục lục
 
-- [Học node interactively](#learn-node-interactively)
-- [Hiểu node](#understanding-node)
+- [Học node một cách tương tác](#learn-node-interactively)
+- [Hiểu về node](#understanding-node)
 - [Core modules](#core-modules)
 - [Callbacks](#callbacks)
 - [Events](#events)
@@ -21,78 +21,76 @@ có thể sẽ dễ dàng bắt đầu hơn bằng việc đọc [JavaScript for
 - [Client side development với npm](#client-side-development-with-npm)
 - [Going with the grain](#going-with-the-grain)
 
-## Learn node interactively
-
-In addition to reading this guide it's super important to also bust out your favorite text editor and actually write some node code. I always find that when I just read some code in a book it never really clicks, but learning by writing code is a good way to grasp new programming concepts.
+## Học node một cách tương tác
+Ngoài việc đọc hướng dẫn này, điều siêu quan trọng là bạn mở trình soạn thảo yêu thích của mình và viết node code. Tôi thấy rằng khi tôi chỉ đọc code từ một cuốn sách đó chưa phải là việc bạn code thực sự. Học bằng cách viết code là cách học tốt để nắm bắt các khái niệm lập trình mới.
 
 ### NodeSchool.io
 
-[NodeSchool.io](http://nodeschool.io/) is a series of free + open source interactive workshops that teach you the principles of Node.js and beyond.
+[NodeSchool.io](http://nodeschool.io/) là một series workshop tương tác mã nguồn mở miễn phí dạy bạn các khái niệm cơ bản (principles) của Nodejs và các công nghệ liên quan.
 
-[Learn You The Node.js](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win) is the introductory NodeSchool.io workshop. It's a set of programming problems that introduce you to common node patterns. It comes packaged as a command line program.
+[Learn You The Node.js](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win) là giới thiệu của NodeSchool.io workshop.  Đó là một tập hợp các vấn đề lập trình giới thiệu cho bạn các patterns chung của Node. Nó được đóng gói như một chương trình chạy bằng giao diện dòng lệnh.
 
 [![learnyounode](https://github.com/rvagg/learnyounode/raw/master/learnyounode.png)](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win)
 
-You can install it with npm:
+Bạn có thể cài đặt nó với npm:
 
 ```
-# install
+# Cài đặt
 npm install learnyounode -g
 
-# start the menu
+# Khởi động chương trình
 learnyounode
 ```
 
-## Understanding node
+## Hiểu về node
 
-Node.js is an open source project designed to help you write JavaScript programs that talk to networks, file systems or other I/O (input/output, reading/writing) sources. That's it! It is just a simple and stable I/O platform that you are encouraged to build modules on top of.
-
-What are some examples of I/O? Here is a diagram of an application that I made with node that shows many I/O sources:
+Node.js là một dự án open source được thiết kế giúp bạn viết các chương trình Javascript giao tiếp với mạng (networks), tập tin hệ thống (file systems) hoặc các nguồn vào ra khác (input/output, reading/writing).  Node đơn giản là một nền tảng vào ra đơn giản và ổn định ( simple and stable) khuyến khích bạn viết các module trên nó.
+Đâu là ví dụ của việc vào ra (I/O)? Dưới đây là một sơ đồ của một ứng dụng mà tôi đã thực hiện với Node chỉ ra nhiều nguồn vào ra (I/O):
 
 ![server diagram](server-diagram.png)
 
-If you don't understand all of the different things in the diagram it is completely okay. The point is to show that a single node process (the hexagon in the middle) can act as the broker between all of the different I/O endpoints (orange and purple represent I/O).
+Hoàn toàn ổn khi bạn không hiểu toàn bộ các phần có trong sơ đồ. Điểm cốt lõi là sơ đồ chỉ ra rằng một process Node đơn (hình lục giác ở giữa) có thể hoạt động như điểm trung chuyển (the broker) giữa tất cả các điểm đầu cuối ra vào (I/O) khác nhau. ( Màu cam và hồng biểu diễn các I/O).
 
-Usually building these kinds of systems is either:
+Thường xây dựng những hệ thống loại này trong các trường hợp:
+- Khó để viết mã nhưng cần đưa ra kết quả siêu nhanh ( như là viết web servers từ đầu bằng ngôn ngữ C)
+- Dễ dàng để code nhưng không cần quá nhanh (speedy/robust) (Khi ai đó cố gắng upload một file dung lượng 5GB và server của bạn bị treo)
 
-- difficult to code but yields super fast results (like writing your web servers from scratch in C)
-- easy to code but not very speedy/robust (like when someone tries to upload a 5GB file and your server crashes)
+Mục tiêu của Node là tạo ra sự cân bằng giữa việc dễ hiểu, dễ sử dụng và đủ nhanh cho hầu hết các trường hợp.
 
-Node's goal is to strike a balance between these two: relatively easy to understand and use and fast enough for most use cases.
+Node không phải là những thứ dưới đây.
 
-Node isn't either of the following:
+  - Một web framework (giống như Rails hay Django, mặc dù Node có thể được dùng để làm ra những thứ như vậy)
 
-  - A web framework (like Rails or Django, though it can be used to make such things)
-  - A programming language (it uses JavaScript but node isn't its own language)
-  
-Instead, node is somewhere in the middle. It is:
+  - Một ngôn ngữ lập trình (Node sử dụng Javascript nhưng node bản thân nó không phải là một ngôn ngữ)
 
-  - Designed to be simple and therefore relatively easy to understand and use
-  - Useful for I/O based programs that need to be fast and/or handle lots of connections
-  
-At a lower level, node can be described as a tool for writing two major types of programs: 
+Thay vào đó, Node ở chỗ nào đó ở giữa:
 
-  - Network programs using the protocols of the web: HTTP, TCP, UDP, DNS and SSL
-  - Programs that read and write data to the filesystem or local processes/memory
+  - Node được thiết kế đơn giản hoá do đó tương đối dễ hiểu và dễ sử dụng.
+  - Có ích cho các chương trình vào ra (I/O based programs) cần nhanh hoặc xử lý nhiều kết nối.
 
-What is an "I/O based program"? Here are some common I/O sources:
+Ở mức thấp hơn, Node có thể được mô tả như là công cụ để viết hai loại chương trình chính:
+
+  - Network programs sử dụng các giao thức web: HTTP, TCP, UDP, DNS and SSL
+  - Chương trình đọc và ghi dữ liệu vào file hệ thống hoặc local process/memory.
+
+Thế nào là một chương trình "I/O based program"? Dưới đây là một số các nguồn vào ra (I/O sources):
 
   - Databases (e.g. MySQL, PostgreSQL, MongoDB, Redis, CouchDB)
   - APIs (e.g. Twitter, Facebook, Apple Push Notifications)
-  - HTTP/WebSocket connections (from users of a web app)
+  - Các kết nối HTTP/WebSocket ( từ người dùng tới ứng dụng web)
   - Files (image resizer, video editor, internet radio)
 
-Node does I/O in a way that is [asynchronous](https://en.wikipedia.org/wiki/Asynchronous_I/O) which lets it handle lots of different things simultaneously. For example, if you go down to a fast food joint and order a cheeseburger they will immediately take your order and then make you wait around until the cheeseburger is ready. In the meantime they can take other orders and start cooking cheeseburgers for other people. Imagine if you had to wait at the register for your cheeseburger, blocking all other people in line from ordering while they cooked your burger! This is called **blocking I/O** because all I/O (cooking cheeseburgers) happens one at a time. Node, on the other hand, is **non-blocking**, which means it can cook many cheeseburgers at once.
+Node thực hiện vào ra theo kiểu bất đồng bộ ([asynchronous](https://en.wikipedia.org/wiki/Asynchronous_I/O)) cho phép Node xử lý nhiều thứ khác nhau một cách đồng thời. Ví dụ, nếu bạn tới một quầy bán thức ăn nhanh và gọi một phần cheeseburger nhân viên của quầy sẽ ngay lập tức nhận đơn đặt hàng của bạn và để bạn chờ cho tới khu chiếc cheeseburger sẵn sàng. Trong lúc đó họ có thể nhận các đơn đặt hàng khác và bắt đầu nấu cheeseburger cho những người khác. Hãy tưởng tượng rằng nếu bạn phải đợi khi đăng ký đặt chiếc bánh CheeseBurger của bạn,chặn toàn bộ những người khác trong hàng đợi đặt hàng trong khi nhân viên nấu chiếc bánh burger phục vụ bạn. Đó được gọi là **blocking I/O**  bởi vì toàn bộ các I/O (cooking cheeseburgers) sảy ra ở cùng một thời điểm. Node ở một mặt khác là **non-blocking**, có nghĩa là Node có thể nấu rất nhiều chiếc bánh cheeseburgers ở cùng một thời điểm.
 
-Here are some fun things made easy with node thanks to its non-blocking nature:
-  
-  - Control [flying quadcopters](http://www.nodecopter.com/)
-  - Write IRC chat bots
-  - Create [walking biped robots](https://www.youtube.com/watch?v=jf-cEB3U2UQ)
+Dưới đây là một số điều thú vị được thực hiện dễ dàng với Node nhờ bản chất non-blocking của nó:
+
+  - Điều khiển (Control) [flying quadcopters](http://www.nodecopter.com/)
+  - Viêt IRC chat bots
+  - Tạo [walking biped robots](https://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
 ## Core modules
 
-Firstly I would recommend that you get node installed on your computer. The easiest way is to visit [nodejs.org](http://nodejs.org) and click `Install`.
+Trước hết, tôi khuyên bạn nên cài đặt Node trên máy tính của bạn. Cách dễ dàng nhất là truy cập vào [nodejs.org](http://nodejs.org) và click `Install`.
 
 Node has a small core group of modules (commonly referred to as 'node core') that are presented as the public API that you are intended to write programs with. For working with file systems there is the `fs` module and for networks there are modules like `net` (TCP), `http`, `dgram` (UDP).
 
@@ -313,7 +311,7 @@ var chatClient = require('my-chat-client').connect()
 
 chatClient.on('connect', function() {
   // have the UI show we are connected
-}) 
+})
 
 chatClient.on('connectionError', function() {
   // show error to the user
@@ -346,7 +344,7 @@ function storeMessage(message) {
 
 ## Streams
 
-Early on in the node project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
+Early on in the node project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it.
 
 The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
 
