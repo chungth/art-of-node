@@ -92,19 +92,19 @@ Dưới đây là một số điều thú vị được thực hiện dễ dàng
 
 Trước hết, tôi khuyên bạn nên cài đặt Node trên máy tính của bạn. Cách dễ dàng nhất là truy cập vào [nodejs.org](http://nodejs.org) và click `Install`.
 
-Node has a small core group of modules (commonly referred to as 'node core') that are presented as the public API that you are intended to write programs with. For working with file systems there is the `fs` module and for networks there are modules like `net` (TCP), `http`, `dgram` (UDP).
+Node có một nhóm các modules lõi nhỏ ( thường được gọi là 'node core') được biểu thị như là các API công khai ( public API) mà bạn có ý định viết các chương trình với chúng. Để làm việc với các hệ thống file, có các `fs` module và cho networks có các module như `net` (TCP), `http`, `dgram` (UDP).
 
-In addition to `fs` and network modules there are a number of other base modules in node core. There is a module for asynchronously resolving DNS queries called `dns`, a module for getting OS specific information like the tmpdir location called `os`, a module for allocating binary chunks of memory called `buffer`, some modules for parsing urls and paths (`url`, `querystring`, `path`), etc. Most if not all of the modules in node core are there to support node's main use case: writing fast programs that talk to file systems or networks.
+Ngoài module `fs` và các network modules còn có các module cơ bản khác ở node core.Để phân giải các yêu cầu DNS một cách bất đồng bộ có module `dns`, module để lấy các thông tin từ hệ điều hành như vị trí thư mục tmp có tên là `os`, một module để cấp phát các khối nhị phân của bộ nhớ được gọi là `buffer`, vài modules dùng để phân tích url và path như là `url`, `querystring`, `path`, vv. Most if not all of the modules in node core are there to support node's main use case: writing fast programs that talk to file systems or networks.
 
-Node handles I/O with: callbacks, events, streams and modules. If you learn how these four things work then you will be able to go into any module in node core and have a basic understanding about how to interface with it.
+Node xử lý vào ra (I/O) với : callbacks, events, streams và modules. Nếu bạn học bốn thứ này hoạt động như thế nào bạn có thể sử dụng bất cứ module nào trong node core và hiểu cơ bản về cách thức giao tiếp với chúng.
 
 ## Callbacks
 
-This is the most important topic to understand if you want to understand how to use node. Nearly everything in node uses callbacks. They weren't invented by node, they are just part of the JavaScript language.
+Đây là chủ đề quan trọng nhất cần hiểu nếu bạn muốn hiểu cách sử dụng node. Gần như mọi thứ trong Node sử dụng callbacks. Callback không được sinh ra bởi Node, chúng chỉ là một phần của ngôn ngữ Javascript.
 
-Callbacks are functions that are executed asynchronously, or at a later time. Instead of the code reading top to bottom procedurally, async programs may execute different functions at different times based on the order and speed that earlier functions like http requests or file system reads happen.
+Callbacks là các hàm được thực thi một cách bất đồng bộ, hoặc ở một thời điểm sau đó. Thay vì đọc mã từ trên xuống dưới, các chương trình bất đồng bộ có thể thực thi các hàm khác nhau ở các thời điểm khác nhau dựa trên thứ tự và tốc độ sớm hơn các hàm http request hay hệ thống file đọc sảy ra.
 
-The difference can be confusing since determining if a function is asynchronous or not depends a lot on context. Here is a simple synchronous example, meaning you can read the code top to bottom just like a book:
+Sự khác biệt có thể gây nhầm lẫn khi xác định một hàm là đồng bộ hay bất đồng bộ phụ thuộc vào nhiều ngữ cảnh. Dưới đây là một ví dụ đơn giản về đồng bộ, có nghĩa là bạn có thể đọc code từ trên xuống dưới giống như đọc sách:
 
 ```js
 var myNumber = 1
@@ -113,9 +113,9 @@ addOne() // run the function
 console.log(myNumber) // logs out 2
 ```
 
-The code here defines a function and then on the next line calls that function, without waiting for anything. When the function is called it immediately adds 1 to the number, so we can expect that after we call the function the number should be 2. This is the expectation of synchronous code - it sequentially runs top to bottom.
+Đoạn code trên định nghĩa một hàm và hàm đó được gọi ở dòng tiếp sau mà không chờ đợi điều gì. Khi hàm được gọi nó công 1 vào số một cách tức thời, vì vậy chúng ta có thể kỳ vọng rằng sau khi gọi hàm giá trị của số sẽ là 2. Đây là sự kỳ vọng của xử lý đồng bộ, xử lý tuần tự chạy từ trên xuống dưới.
 
-Node, however, uses mostly asynchronous code. Let's use node to read our number from a file called `number.txt`:
+Tuy nhiên, Node được xử dụng hầu hết theo kiểu bất đồng bộ. Hãy sử dụng Node để đọc số từ file có tên là `number.txt`:
 
 ```js
 var fs = require('fs') // require is a special function provided by node
@@ -133,23 +133,23 @@ addOne()
 console.log(myNumber) // logs out undefined -- this line gets run before readFile is done
 ```
 
-Why do we get `undefined` when we log out the number this time? In this code we use the `fs.readFile` method, which happens to be an asynchronous method. Usually things that have to talk to hard drives or networks will be asynchronous. If they just have to access things in memory or do some work on the CPU they will be synchronous. The reason for this is that I/O is reallyyy reallyyy sloowwww. A ballpark figure would be that talking to a hard drive is about 100,000 times slower than talking to memory (e.g. RAM).
+Tại sao chúng ta lại thấy giá trị trả về của lệnh console.log là  `undefined` trong lần này? Trong đoạn code trên chúng ta đã dùng phương thức `fs.readFile`, là một phương thức thực hiện theo kiểu bất đồng bộ. Usually things that have to talk to hard drives or networks will be asynchronous. If they just have to access things in memory or do some work on the CPU they will be synchronous. Lý do là vì các thiết bị vào ra I/O thường rất rất chậm. A ballpark figure would be that talking to a hard drive is about 100,000 times slower than talking to memory (e.g. RAM).
 
-When we run this program all of the functions are immediately defined, but they don't all execute immediately. This is a fundamental thing to understand about async programming. When `addOne` is called it kicks off a `readFile` and then moves on to the next thing that is ready to execute. If there is nothing to execute node will either wait for pending fs/network operations to finish or it will stop running and exit to the command line.
+Khi chúng ta chạy chương trình, toàn bộ các hàm được định nghĩa tức thời, nhưng không phải toàn bộ chúng thực thi một cách tức thời. Đây là điểm cơ bản để hiểu về các chương trình bất đồng bộ. Khi `addOne` được gọi, hàm này kicks off a `readFile`  và sau đó di chuyển tới những phần đã sẵn sàng để thực thi. Nếu như không có gì để thực thi nữa Node sẽ chờ các tác vụ fs/network kết thúc hoặc nó sẽ dừng chạy và thoát về commandline.
 
-When `readFile` is done reading the file (this may take anywhere from milliseconds to seconds to minutes depending on how fast the hard drive is) it will run the `doneReading` function and give it an error (if there was an error) and the file contents.
+Khi `readFile` đọc file xong( có thể mất từ milli giây cho tới giây hoặc thậm chí là hàng phút phụ thuốc vào tốc độ của ổ cứng) nó sẽ chạy hàm  `doneReading` và đưa ra lỗi (nếu như có lỗi sảy ra) và nội dung file.
 
-The reason we got `undefined` above is that nowhere in our code exists logic that tells the `console.log` statement to wait until the `readFile` statement finishes before it prints out the number.
+Lý do chúng ta nhận được kết quả `undefined` ở trên là bởi vì trong code của chúng ta không có bất kỳ logic nào nói lệnh `console.log` chờ cho tới khi lệnh `readFile` hoàn thành trước khi in ra giá trị của số.
 
 If you have some code that you want to be able to execute over and over again, or at a later time, the first step is to put that code inside a function. Then you can call the function whenever you want to run your code. It helps to give your functions descriptive names.
 
-Callbacks are just functions that get executed at some later time. The key to understanding callbacks is to realize that they are used when you don't know **when** some async operation will complete, but you do know **where** the operation will complete — the last line of the async function! The top-to-bottom order that you declare callbacks does not necessarily matter, only the logical/hierarchical nesting of them. First you split your code up into functions, and then use callbacks to declare if one function depends on another function finishing.
+Callbacks chỉ là các hàm được thực thi ở thời điểm nào sau đó. Chìa khoá để hiểu callbacks là hiểu ra nhận ra rằng chúng được sử dụng khi bạn không biết **khi nào** một vài tác vụ bất đồng bộ hoàn thành, nhưng bạn biết **nơi** mà các tác vụ này kết thúc - dòng cuối cùng của hàm bất đồng bộ! Thức tự từ trên xuống dưới mà bạn khai báo các callbacks không còn quan trọng, điều quan trọng còn lại là the logical/hierarchical nesting of them. First you split your code up into functions, and then use callbacks to declare if one function depends on another function finishing.
 
-The `fs.readFile` method is provided by node, is asynchronous, and happens to take a long time to finish. Consider what it does: it has to go to the operating system, which in turn has to go to the file system, which lives on a hard drive that may or may not be spinning at thousands of revolutions per minute. Then it has to use a magnetic head to read data and send it back up through the layers back into your javascript program. You give `readFile` a function (known as a callback) that it will call after it has retrieved the data from the file system. It puts the data it retrieved into a javascript variable and calls your function (callback) with that variable. In this case the variable is called `fileContents` because it contains the contents of the file that was read.
+Phương thức`fs.readFile` được cung cấp bởi Node là bất đồng bộ, Nó mất một khoảng thời gian để hoàn thành. Consider what it does: it has to go to the operating system, which in turn has to go to the file system, which lives on a hard drive that may or may not be spinning at thousands of revolutions per minute. Then it has to use a magnetic head to read data and send it back up through the layers back into your javascript program. You give `readFile` a function (known as a callback) that it will call after it has retrieved the data from the file system. It puts the data it retrieved into a javascript variable and calls your function (callback) with that variable. In this case the variable is called `fileContents` because it contains the contents of the file that was read.
 
-Think of the restaurant example at the beginning of this tutorial. At many restaurants you get a number to put on your table while you wait for your food. These are a lot like callbacks. They tell the server what to do after your cheeseburger is done.
+Hãy nghĩ về ví dụ nhà hàng ở đoạn đầu của tutorial này. Ở nhiều nhà hàng bạn nhận được một con số đặt trên mặt bàn trong khi bạn đợi đồ ăn của bạn. Có rất nhiều điểm tương đồng với callbacks. Callback nói với server điều nó phải thực thi sau khi chiếc bánh cheeseburger của bạn được làm xong.
 
-Let's put our `console.log` statement into a function and pass it in as a callback:
+Hãy để lệnh `console.log` vào trong một hàm và truyền nó vào như một callback:
 
 ```js
 var fs = require('fs')
@@ -170,9 +170,9 @@ function logMyNumber() {
 addOne(logMyNumber)
 ```
 
-Now the `logMyNumber` function can get passed in as an argument that will become the `callback` variable inside the `addOne` function. After `readFile` is done the `callback` variable will be invoked (`callback()`). Only functions can be invoked, so if you pass in anything other than a function it will cause an error.
+Và bây giờ hàm `logMyNumber` được truyền vào như một tham số và trở thành biến `callback` bên trong hàm`addOne`. Sau khi phương thức `readFile` hoàn thành biến `callback` sẽ được invoked (`callback()`). Chỉ hàm mới có thể được invoked, vì vậy nếu bạn truyền tham số nào đó khác hàm, sẽ có lỗi sảy ra.
 
-When a function gets invoked in javascript the code inside that function will immediately get executed. In this case our log statement will execute since `callback` is actually `logMyNumber`. Remember, just because you *define* a function it doesn't mean it will execute. You have to *invoke* a function for that to happen.
+Khi một hàm được invoked trong javascript code trong thân hàm sẽ được thực thi lập tức. Trong trường hợp này câu lệnh log của chúng ta sẽ được thực thi vì `callback` là `logMyNumber`. Hãy nhớ rằng, nếu bạn *định nghĩa* một hàm không có nghĩa là nó sẽ được thực thi. Bạn cần phải *invoke* một hàm để nó thực hiện.
 
 To break down this example even more, here is a timeline of events that happen when we run this program:
 
@@ -181,11 +181,11 @@ To break down this example even more, here is a timeline of events that happen w
 - 3: With nothing to do, node idles for a bit as it waits for `readFile` to finish. If there was anything else to do during this time, node would be available for work.
 - 4: As soon as `readFile` finishes it executes its callback, `doneReading`, which parses `fileContents` for an integer called `myNumber`, increments `myNumber` and then immediately invokes the function that `addOne` passed in (its callback), `logMyNumber`.
 
-Perhaps the most confusing part of programming with callbacks is how functions are just objects that can be stored in variables and passed around with different names. Giving simple and descriptive names to your variables is important in making your code readable by others. Generally speaking in node programs when you see a variable like `callback` or `cb` you can assume it is a function.
+Tất nhiên phần Perhaps the most confusing part of programming with callbacks is how functions are just objects that can be stored in variables and passed around with different names. Giving simple and descriptive names to your variables is important in making your code readable by others. Generally speaking in node programs when you see a variable like `callback` or `cb` you can assume it is a function.
 
-You may have heard the terms 'evented programming' or 'event loop'. They refer to the way that `readFile` is implemented. Node first dispatches the `readFile` operation and then waits for `readFile` to send it an event that it has completed. While it is waiting node can go check on other things. Inside node there is a list of things that are dispatched but haven't reported back yet, so node loops over the list again and again checking to see if they are finished. After they finished they get 'processed', e.g. any callbacks that depended on them finishing will get invoked.
+Bạn có thể đã từng nghe thấy thuật ngữ 'evented programming' (lập trình hướng sự kiện) hay 'event loop' (vòng lặp sự kiện). They refer to the way that `readFile` is implemented. Node first dispatches the `readFile` operation and then waits for `readFile` to send it an event that it has completed. While it is waiting node can go check on other things. Inside node there is a list of things that are dispatched but haven't reported back yet, so node loops over the list again and again checking to see if they are finished. After they finished they get 'processed', e.g. any callbacks that depended on them finishing will get invoked.
 
-Here is a pseudocode version of the above example:
+Dưới đây là đoạn giả mã của ví dụ trên:
 
 ```js
 function addOne(thenRunThisFunction) {
@@ -197,7 +197,7 @@ function addOne(thenRunThisFunction) {
 addOne(function thisGetsRunAfterAddOneFinishes() {})
 ```
 
-Imagine you had 3 async functions `a`, `b` and `c`. Each one takes 1 minute to run and after it finishes it calls a callback (that gets passed in the first argument). If you wanted to tell node 'start running a, then run b after a finishes, and then run c after b finishes' it would look like this:
+Tưởng tượng rằng bạn có 3 hàm bất đồng bộ `a`, `b` và `c`. Mỗi hàm mất 1 phút để chạy và sau khi kết thúc nó gọi một callback( được truyền vào ở tham số thứ nhất). Nếu bạn muốn chỉ định cho Node bắt đầu chạy a, sau đó chạy b ngay sau khi kết thúc a, và rồi chạy c ngay sau khi kết thúc b, thì đoạn code của bạn tương tự như dưới đây:
 
 ```js
 a(function() {
@@ -207,9 +207,9 @@ a(function() {
 })
 ```
 
-When this code gets executed, `a` will immediately start running, then a minute later it will finish and call `b`, then a minute later it will finish and call `c` and finally 3 minutes later node will stop running since there would be nothing more to do. There are definitely more elegant ways to write the above example, but the point is that if you have code that has to wait for some other async code to finish then you express that dependency by putting your code in functions that get passed around as callbacks.
+Khi đoạn code trên được thực thi, `a` sẽ được thực hiện một cách tức thì, một phút sau a sẽ kết thúc và gọi `b`, và `c` sẽ được gọi ở thời điểm một phút sau đó khi mà  `b` đã kết thúc, cuối cùng Node sẽ dừng chạy sau 3 phút vì không còn gì để thực thi. There are definitely more elegant ways to write the above example, but the point is that if you have code that has to wait for some other async code to finish then you express that dependency by putting your code in functions that get passed around as callbacks.
 
-The design of node requires you to think non-linearly. Consider this list of operations:
+Thiết kế của Node yêu cầu bạn nghĩ một cách không tuyến tính (non-linearly). Consider this list of operations:
 
 ```
 read a file
@@ -259,19 +259,19 @@ fs.readFile('movie.mp4', function finishedReading(error, movieData) {
 })
 ```
 
-## Events
+## Events (sự kiện)
 
 In node if you require the [events](http://nodejs.org/api/events.html) module you can use the so-called 'event emitter' that node itself uses for all of its APIs that emit things.
 
-Events are a common pattern in programming, known more widely as the ['observer pattern'](https://en.wikipedia.org/wiki/Observer_pattern) or 'pub/sub' (publish/subscribe). Whereas callbacks are a one-to-one relationship between the thing waiting for the callback and the thing calling the callback, events are the same exact pattern except with a many-to-many API.
+Events là một pattern phổ biến trong lập trình,known more widely as the ['observer pattern'](https://en.wikipedia.org/wiki/Observer_pattern) or 'pub/sub' (publish/subscribe). Whereas callbacks are a one-to-one relationship between the thing waiting for the callback and the thing calling the callback, events are the same exact pattern except with a many-to-many API.
 
 The easiest way to think about events is that they let you subscribe to things. You can say 'when X do Y', whereas with plain callbacks it is 'do X then Y'.
 
-Here are few common use cases for using events instead of plain callbacks:
+Dưới đây là một vài cách sử dụng events phổ biến thay cho plain callbacks:
 
-- Chat room where you want to broadcast messages to many listeners
-- Game server that needs to know when new players connect, disconnect, move, shoot and jump
-- Game engine where you want to let game developers subscribe to events like `.on('jump', function() {})`
+- Chat room nơi bạn muốn gửi cùng lúc một tin nhắn tới nhiều người.(broadcast message)
+- Game server cần biết khi nào một người chơi mới kết nối, ngắt kết nối, di chuyển, nhảy, bắn.
+- Game engine nơi bạn muốn cho phép game developers subscribe to events like `.on('jump', function() {})`
 - A low level web server that wants to expose an API to easily hook into events that happen like `.on('incomingRequest')` or `.on('serverError')`
 
 If we were trying to write a module that connects to a chat server using only callbacks it would look like this:
@@ -329,6 +329,7 @@ chatClient.on('message', function() {
 This approach is similar to the pure-callback approach but introduces the `.on` method, which subscribes a callback to an event. This means you can choose which events you want to subscribe to from the `chatClient`. You can also subscribe to the same event multiple times with different callbacks:
 
 ```js
+
 var chatClient = require('my-chat-client').connect()
 chatClient.on('message', logMessage)
 chatClient.on('message', storeMessage)
